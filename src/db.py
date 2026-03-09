@@ -36,20 +36,19 @@ def load_config_from_env() -> DBConfig:
     Recomendación:
     - Validar que DB_PORT sea un número entero.
     """
+    port_str = os.getenv("DB_PORT", "3306")
     try:
-        port = int(os.getenv("DB_PORT", "3306"))
+        port = int(port_str)
     except ValueError:
-        raise ValueError("DB_PORT debe ser un número entero válido.")
+        port = 3306
 
-    conf = DBConfig(
+    return DBConfig(
         host=os.getenv("DB_HOST", "localhost"),
         port=port,
         database=os.getenv("DB_NAME", "sti_incidencias"),
         user=os.getenv("DB_USER", "sti_app"),
-        password=os.getenv("DB_PASSWORD", "sti_app_2026"),
+        password=os.getenv("DB_PASSWORD", "sti_app_2026")
     )
-
-    return conf
 
 
 
@@ -64,15 +63,14 @@ def get_connection(cfg: Optional[DBConfig] = None) -> MySQLConnection:
 
     if cfg is None:
         cfg = load_config_from_env()
-
-    conn = mysql.connector.connect(
+        
+    return mysql.connector.connect(
         host=cfg.host,
         port=cfg.port,
         database=cfg.database,
         user=cfg.user,
-        password=cfg.password,
+        password=cfg.password
     )
-    return conn
 
 
 
